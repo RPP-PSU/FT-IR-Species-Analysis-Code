@@ -1,64 +1,84 @@
 # FT-IR Species Analysis Code
 
-This repository contains MATLAB code for analyzing FT-IR (Fourier-transform infrared spectroscopy) spectra for various chemical species. The code was translated from legacy FORTRAN and modularized for clarity, maintainability, and revision control.
+This repository contains MATLAB code for quantitative analysis of FT-IR (Fourier-Transform Infrared) spectra, enabling the extraction of species concentrations and spectral fitting using HITRAN data and partition functions.
 
-## Overview
+---
 
-The main goal of this program is to determine the partial pressures of specific molecules using measured FT-IR spectral data. It uses nonlinear least squares fitting (Levenberg-Marquardt algorithm) to optimize parameters so that modeled transmittance matches experimental data.
+## Features
 
-## Structure
+- **Automated GUI Input:**  
+  A unified graphical user interface (GUI) launches automatically upon running the main driver. All required input files and numerical parameters are selected/entered through the GUI—no need to edit code to change settings!
+- **Flexible Input:**  
+  Select partition function files, HITRAN data files, measured FT-IR data, and output file destinations via the GUI.
+- **Numerical Parameter Entry:**  
+  Enter spectral range, temperature, pressure, and other parameters directly in the GUI.
+- **Settings Persistence:**  
+  Option to save your input selections for future runs.
+- **Nonlinear Least Squares Fitting:**  
+  Performs transmittance fitting with a Levenberg-Marquardt algorithm.
+- **Modular Code Structure:**  
+  Core routines are separated into subroutines for clarity and maintainability.
 
-- `global_variables.m` — Defines and initializes all shared/global variables.
-- `main_driver.m` — Orchestrates the program: loads data, sets parameters, runs subroutines.
-- Subroutines:
-  - `QTofi.m` — Loads partition function data.
-  - `INPUT.m` — Reads and processes HITRAN line data.
-  - `INDAT.m` — Loads measured FT-IR wavenumber and transmittance data.
-  - `MRQMIN.m` — Performs nonlinear least squares optimization (Levenberg-Marquardt).
-  - `OUTPT.m` — Writes results to output files (fitted coefficients, residuals, etc.).
+---
 
-## How to Run
+## Getting Started
 
-1. **Prepare Input Files**
-    - Partition function input file (e.g., `C:\QUANT\Partition-Sums\Input_File_data.txt`)
-    - Reduced HITRAN data files for each molecule (e.g., `H2O.i`, `CO2.i`)
-    - Measured FT-IR data file (e.g., `C:\FTIR_Data\MeasuredData.dat`)
-    - Edit paths in `main_driver.m` as needed.
+### 1. **Clone or Download the Repository**
 
-2. **MATLAB Setup**
-    - Place all `.m` files from this repository in your working directory.
-    - Ensure input files are accessible (correct paths).
-    - Open MATLAB and navigate to the repository directory.
+```sh
+git clone https://github.com/RPP-PSU/FT-IR-Species-Analysis-Code.git
+```
 
-3. **Run the Main Program**
-    ```matlab
-    main_driver
-    ```
+### 2. **Open MATLAB**
 
-4. **Outputs**
-    - Transmittance and error data file (e.g., `Results_Transmittance.dat`)
-    - Fitted coefficients and covariance matrix file (e.g., `Results_Coefficients.dat`)
+- Set the repository folder as your working directory.
 
-## Subroutine Summaries
+### 3. **Run the Main Driver**
 
-**QTofi.m**  
-Reads partition function data from input files, storing it for use in temperature-dependent spectral calculations.
+- In MATLAB, run:
+  ```matlab
+  main_driver
+  ```
 
-**INPUT.m**  
-Processes HITRAN line data files, applying temperature and pressure corrections, and calculates contributions to the optical depth for each spectral line.
+### 4. **Use the GUI to Select Inputs**
 
-**INDAT.m**  
-Loads measured wavenumber and transmittance values from a user-supplied file, filtering points to the desired spectral range.
+- The GUI will prompt you to:
+  - Select your **Partition Function** file(s)
+  - Select **HITRAN Data** file(s)
+  - Select your **Measured FT-IR** data file
+  - Set output file locations
+  - Enter all numerical input parameters (wavenumber range, temperature, pressure, step size, etc.)
+  - Choose whether to save your input settings for future runs
 
-**MRQMIN.m**  
-Uses the Levenberg-Marquardt algorithm to optimize model parameters so calculated transmittance fits the measured data.
+- Click **Run** in the GUI to start the analysis, or **Cancel** to abort.
 
-**OUTPT.m**  
-Writes all results to output files: measured vs. modeled transmittance, fitting coefficients, error metrics, and covariance matrix.
+---
 
-## Revision Control
+## Repository Structure
 
-This repo is set up for future updates and troubleshooting:
-- Each subroutine is modular and well-documented.
-- Update any file and commit your changes for full revision history.
-- Add new subroutines or input formats as needed.
+```
+FT-IR-Species-Analysis-Code/
+│
+├── main_driver.m          # Main script, launches GUI and orchestrates workflow
+├── FTIR_Input_GUI.m       # GUI for all input file selection and parameter entry
+├── global_variables.m     # Defines and initializes global variables
+├── QTofi.m                # Loads partition function data
+├── INPUT.m                # Loads and processes HITRAN line data
+├── INDAT.m                # Loads measured FT-IR data
+├── MRQMIN.m               # Nonlinear least squares fitting routine
+├── OUTPT.m                # Output file writer
+├── README.md              # This file
+└── (other possible files)
+```
+
+## Requirements
+
+- MATLAB R2018b or newer (for GUI compatibility)
+- HITRAN-format input files and partition function data files
+- Measured FT-IR data files in supported format (see comments in `INDAT.m`)
+
+---
+
+## License
+
+This project is for research and educational use.
