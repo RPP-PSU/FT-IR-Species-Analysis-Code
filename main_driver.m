@@ -1,39 +1,44 @@
 % MATLAB File: main_driver.m
-% Purpose: Main driver script for FT-IR Species Analysis Code.
-% Orchestrates loading input files, initializing variables, running subroutines, and writing outputs.
+% Purpose: Main driver script for FT-IR Species Analysis Code, now launches GUI for input selection.
 
-% Initialize global variables
+% Get user input from GUI
+params = FTIR_Input_GUI();
+
+% Abort run if GUI was cancelled
+if isempty(params)
+    disp('Analysis aborted. Please run again and complete input selection.');
+    return;
+end
+
+% Assign global variables from GUI
 global PartitionFunctionData SpectralDataFiles NumLinesPerMolecule MoleculeIDs HitranInputFiles
 global MinWavenumber MaxWavenumber PartitionFunctionRatios InternalPartitionSums IsotopologueVector
 global WavenumberData MeasuredTransmittance NumDataPoints TotalPressure Temperature IntegrationStepSize OpticalDepthArray
 global CalculatedTransmittance CoefficientArray NumCoefficients CovarianceMatrix AlphaMatrix ChiSquared Lambda
 global ConvergenceFlag IterationCount OutputFilePath1 OutputFilePath2 MoleculeNames InputFilePath
 
-% ----------------------------- Configuration -----------------------------
-InputFilePath      = 'C:\FTIR_Data\MeasuredData.dat'; % Measured FT-IR data
-OutputFilePath1    = 'C:\FTIR_Data\Results_Transmittance.dat'; % Output: transmittance
-OutputFilePath2    = 'C:\FTIR_Data\Results_Coefficients.dat';  % Output: coefficients/covariance
-SpectralDataFiles  = {'C:\QUANT\Partition-Sums\Input_File_data.txt'}; % Partition function file list
-HitranInputFiles   = {'C:\QUANT\Hitran\H2O.i', 'C:\QUANT\Hitran\CO2.i'}; % Example HITRAN files
-MinWavenumber      = 600;    % cm^-1
-MaxWavenumber      = 2400;   % cm^-1
-TotalPressure      = 1.0;    % atm
-Temperature        = 296.0;  % K
-IntegrationStepSize= 0.01;   % cm^-1
+SpectralDataFiles = {params.PartitionFile};
+HitranInputFiles  = {params.HitranFile};
+InputFilePath     = params.MeasuredFile;
+OutputFilePath1   = params.OutputTrans;
+OutputFilePath2   = params.OutputCoeff;
+MinWavenumber     = params.MinWavenumber;
+MaxWavenumber     = params.MaxWavenumber;
+TotalPressure     = params.TotalPressure;
+Temperature       = params.Temperature;
+IntegrationStepSize = params.IntegrationStepSize;
 
-% --------------------------- Load Partition Functions ---------------------
+% Save settings if requested (future enhancement: implement save/load logic)
+if isfield(params, 'SaveSettings') && params.SaveSettings
+    disp('Saving settings for future runs... (not yet implemented)');
+    % Future: save params to a mat/txt file for reload
+end
+
+% Run analysis
 QTofi();
-
-% --------------------------- Load HITRAN and Setup ------------------------
 INPUT();
-
-% ------------------------- Load Measured Data -----------------------------
 INDAT();
-
-% ------------------------- Fitting Procedure ------------------------------
 MRQMIN();
-
-% -------------------------- Output Results --------------------------------
 OUTPT();
 
 disp('FT-IR Species analysis complete. Output files written.');
